@@ -9,6 +9,7 @@ data_quality:
     dated_freshness_report_pattern: reports/collaboration_mcp_YYYYMMDD_quality.json
     tracked_event_models:
     - mcp_directory_entry
+    - mcp_tool_result
     - linked_repository_metadata
     - risk_scope_signal
   event_models:
@@ -18,6 +19,13 @@ data_quality:
       required_fields:
       - repository
       - source_section
+      - source_url
+    mcp_tool_result:
+      date_fields:
+      - collected_at
+      required_fields:
+      - repository
+      - tool_name
       - source_url
     linked_repository_metadata:
       date_fields:
@@ -81,37 +89,92 @@ sources:
   collection_tier: C4_mcp_tool
   content_type: mcp_tool_result
   risk_scope:
+  - external_api_key
   - network_read
-  - tool_allowlist_unresolved
-  notes: Activation audit applied; source remains disabled until transport smoke tests
-    and required secrets are validated.
+  - user_account_scope
+  - write_or_mutation_possible
+  notes: Command and tool allowlist resolved from upstream README on 2026-04-30;
+    source remains disabled until Dooray personal token handling, registry cross-check,
+    and fake transport smoke validation are completed.
   config:
     repository: dooray-go/dooray_mcp
     source_seed: awesome-mcp-korea
     source_section: Collaboration & Communication
-    activation_status: blocked_command_unresolved
-    activation_audited_at: '2026-04-14T01:55:57.420863+00:00'
-    metadata_checked_at: '2026-04-14T01:30:44.113793+00:00'
+    activation_status: blocked_env_required
+    activation_audited_at: '2026-04-30T07:29:15+00:00'
+    risk_scope_reviewed_at: '2026-05-07T07:23:36+00:00'
+    risk_scope_review_status: reviewed_static_allowlist
+    risk_scope_review_artifact: _workspace/2026-05-07_mcp_risk_scope_gate_closure.json
+    risk_scope_review_source: category_risk_scope_and_tool_allowlist
+    env_documentation_checked_at: '2026-05-07T06:55:56+00:00'
+    env_documentation_status: documented_no_secret_placeholder
+    env_documentation_artifact: _workspace/2026-05-07_mcp_env_documentation_manifest.json
+    env_documentation_source: repo_env_example_managed_block
+    package_registry_crosschecked_at: "2026-05-07T07:48:43+00:00"
+    package_registry_crosscheck_status: "not_applicable_direct_binary"
+    package_registry_crosscheck_artifact: "_workspace/2026-05-07_mcp_registry_crosscheck_gate_closure.json"
+    package_registry_crosscheck_source: "not_applicable_direct_binary"
+    metadata_checked_at: '2026-05-07T05:20:56+00:00'
+    metadata_refresh_status: passed
+    metadata_refresh_artifact: _workspace/2026-05-07_mcp_github_repository_metadata_refresh.json
+    metadata_refresh_source: github_rest_api
     github_archived: false
     github_disabled: false
-    github_license: ''
-    github_pushed_at: '2026-04-05T05:04:08Z'
+    github_license: NOASSERTION
+    github_pushed_at: '2026-05-01T11:08:10Z'
     github_default_branch: main
     github_stars: 2
-    command: ''
-    args: []
-    env: []
-    tools: []
+    github_head_sha: e43fd1a9adfe072f44c82ef503a457bfb24434bc
+    docs_advisory_checked_at: '2026-04-30T05:06:52+00:00'
+    docs_advisory_audit_status: passed
+    docs_advisory_audit_artifact: _workspace/2026-04-30_cycle69_mcp_docs_advisory_audit.json
+    docs_advisory_audit_source: github_rest_api_contents_and_security_advisories_with_raw_html_fallback
+    github_readme_present: true
+    github_readme_path: README.md
+    github_readme_size: 9611
+    github_docs_present: true
+    github_docs_paths:
+      - README.md
+    github_docs_path_count: 1
+    github_security_policy_present: false
+    github_security_policy_paths: []
+    github_security_advisory_access_status: checked
+    github_security_advisory_count: 0
+    github_security_advisory_open_count: 0
+    github_security_advisory_published_count: 0
+    github_security_advisory_state_counts: {}
+    github_security_advisory_ids: []
+    command_discovery_checked_at: '2026-04-30T07:29:15+00:00'
+    command_discovery_status: resolved_direct_binary
+    command_discovery_artifact: _workspace/2026-04-30_cycle71_mcp_command_discovery_audit.json
+    command_discovery_source: github_repository_readme_and_project_files
+    command_semantics: homebrew_or_downloaded_binary_requires_cli_token_argument
+    fake_transport_smoke_tested_at: '2026-05-02T01:00:00+00:00'
+    fake_transport_smoke_test_status: passed
+    fake_transport_smoke_test_artifact: _workspace/2026-05-02_cycle85_collaboration_dooray_go_fake_probe.json
+    fake_transport_fixture: fixtures/mcp/fake_dooray_go_dooray_mcp.py
+    command: dooray-mcp
+    args:
+    - --token
+    - <DOORAY_PERSONAL_TOKEN>
+    env:
+    - DOORAY_PERSONAL_TOKEN
+    tools:
+    - dooray_messenger
+    - dooray_calendar_calendars
+    - dooray_calendar_events
+    - dooray_calendar_post_event
+    - dooray_account_members
+    - dooray_account_member
+    - dooray_project
+    - dooray_posts
+    - os
     resources: []
     timeout_seconds: 20
     max_items: 50
     activation_gates:
-    - risk_scope_review_required
-    - tool_resource_allowlist_required
-    - command_or_endpoint_unresolved
-    - registry_crosscheck_required
-    - fake_transport_smoke_test_required
-    event_model: mcp_directory_entry
+    - real_transport_smoke_test_required
+    event_model: mcp_tool_result
 - id: mcp_candidate_kwanok_dooray_mcp
   name: kwanok/dooray-mcp
   type: mcp_server
@@ -124,46 +187,113 @@ sources:
   risk_scope:
   - external_api_key
   - network_read
-  - tool_allowlist_unresolved
   - user_account_scope
   - write_or_mutation_possible
-  notes: Activation audit applied; source remains disabled until transport smoke tests
-    and required secrets are validated.
+  notes: Tool allowlist resolved from upstream README/src/dooray_mcp/tools on 2026-04-29;
+    source remains disabled because Dooray tools include project/message mutations and
+    require DOORAY_API_KEY plus transport smoke validation.
   config:
     repository: kwanok/dooray-mcp
     source_seed: awesome-mcp-korea
     source_section: Collaboration & Communication
-    activation_status: blocked_tool_allowlist_unresolved
-    activation_audited_at: '2026-04-14T01:55:57.420863+00:00'
-    metadata_checked_at: '2026-04-14T01:30:44.113793+00:00'
+    activation_status: blocked_env_required
+    activation_audited_at: '2026-04-29T06:32:17+00:00'
+    risk_scope_reviewed_at: '2026-05-07T07:23:36+00:00'
+    risk_scope_review_status: reviewed_static_allowlist
+    risk_scope_review_artifact: _workspace/2026-05-07_mcp_risk_scope_gate_closure.json
+    risk_scope_review_source: category_risk_scope_and_tool_allowlist
+    env_documentation_checked_at: '2026-05-07T06:55:56+00:00'
+    env_documentation_status: documented_no_secret_placeholder
+    env_documentation_artifact: _workspace/2026-05-07_mcp_env_documentation_manifest.json
+    env_documentation_source: repo_env_example_managed_block
+    package_registry_crosschecked_at: "2026-05-07T07:48:43+00:00"
+    package_registry_crosscheck_status: "not_applicable_git_repository_install"
+    package_registry_crosscheck_artifact: "_workspace/2026-05-07_mcp_registry_crosscheck_gate_closure.json"
+    package_registry_crosscheck_source: "not_applicable_git_repository_install"
+    metadata_checked_at: '2026-05-07T05:20:56+00:00'
+    metadata_refresh_status: passed
+    metadata_refresh_artifact: _workspace/2026-05-07_mcp_github_repository_metadata_refresh.json
+    metadata_refresh_source: github_rest_api
     github_archived: false
     github_disabled: false
-    github_license: ''
+    github_license: NOASSERTION
     github_pushed_at: '2026-02-09T15:53:38Z'
     github_default_branch: main
     github_stars: 0
+    github_head_sha: 6b4ca6c6d7a527fae7dd9d4b067b1ffaac7ecd35
+    docs_advisory_checked_at: '2026-04-30T05:06:52+00:00'
+    docs_advisory_audit_status: passed
+    docs_advisory_audit_artifact: _workspace/2026-04-30_cycle69_mcp_docs_advisory_audit.json
+    docs_advisory_audit_source: github_rest_api_contents_and_security_advisories_with_raw_html_fallback
+    github_readme_present: true
+    github_readme_path: README.md
+    github_readme_size: 2190
+    github_docs_present: true
+    github_docs_paths:
+      - README.md
+      - docs/
+    github_docs_path_count: 2
+    github_security_policy_present: false
+    github_security_policy_paths: []
+    github_security_advisory_access_status: checked
+    github_security_advisory_count: 0
+    github_security_advisory_open_count: 0
+    github_security_advisory_published_count: 0
+    github_security_advisory_state_counts: {}
+    github_security_advisory_ids: []
+    fake_transport_smoke_tested_at: '2026-05-02T01:00:00+00:00'
+    fake_transport_smoke_test_status: passed
+    fake_transport_smoke_test_artifact: _workspace/2026-05-02_cycle85_collaboration_kwanok_dooray_fake_probe.json
+    fake_transport_fixture: fixtures/mcp/fake_kwanok_dooray_mcp.py
     command: uvx
     args:
     - --from
     - git+https://github.com/kwanok/dooray-mcp.git
     - dooray-mcp
     env:
-    - CH_ID
     - DOORAY_API_KEY
-    - PROJECT_ID
-    - TASK_ID
-    - YOUR_PROJECT_ID
-    tools: []
+    tools:
+    - dooray_add_comment
+    - dooray_add_project_member
+    - dooray_create_channel
+    - dooray_create_milestone
+    - dooray_create_tag
+    - dooray_create_task
+    - dooray_create_template
+    - dooray_delete_comment
+    - dooray_delete_milestone
+    - dooray_delete_template
+    - dooray_get_milestone
+    - dooray_get_project
+    - dooray_get_project_member
+    - dooray_get_tag
+    - dooray_get_task
+    - dooray_get_template
+    - dooray_join_channel_members
+    - dooray_leave_channel_members
+    - dooray_list_channels
+    - dooray_list_comments
+    - dooray_list_milestones
+    - dooray_list_project_members
+    - dooray_list_tags
+    - dooray_list_tasks
+    - dooray_list_templates
+    - dooray_list_workflows
+    - dooray_search_members
+    - dooray_send_channel_message
+    - dooray_send_direct_message
+    - dooray_set_task_done
+    - dooray_set_task_workflow
+    - dooray_update_comment
+    - dooray_update_milestone
+    - dooray_update_task
+    - dooray_update_template
     resources: []
     timeout_seconds: 20
     max_items: 50
     activation_gates:
-    - risk_scope_review_required
-    - env_secret_documentation_required
-    - tool_resource_allowlist_required
-    - registry_crosscheck_required
-    - fake_transport_smoke_test_required
-    event_model: mcp_directory_entry
+    - real_transport_smoke_test_required
+    event_model: mcp_tool_result
 entities:
 - name: MCPDomain
   display_name: MCP 도메인

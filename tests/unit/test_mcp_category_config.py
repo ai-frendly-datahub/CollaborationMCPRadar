@@ -20,6 +20,14 @@ def _seed_source(category):
     return seeds[0]
 
 
+def _mcp_source(category, repository: str):
+    return next(
+        source
+        for source in category.sources
+        if source.type == "mcp_server" and source.config.get("repository") == repository
+    )
+
+
 def test_mcp_category_config_uses_readme_section_source() -> None:
     category = load_category_config(_category_name())
 
@@ -81,6 +89,7 @@ def test_mcp_server_sources_are_disabled_metadata_candidates() -> None:
         "blocked_command_unresolved",
         "blocked_env_required",
         "blocked_tool_allowlist_unresolved",
+        "blocked_runtime_config_unresolved",
         "candidate_ready_for_fake_transport_test",
         "fake_transport_smoke_test_passed",
     }
@@ -92,6 +101,24 @@ def test_mcp_server_sources_are_disabled_metadata_candidates() -> None:
         assert source.config["repository"]
         assert isinstance(source.config.get("tools", []), list)
         assert isinstance(source.config.get("resources", []), list)
+        assert source.config["docs_advisory_audit_status"] == "passed"
+        assert (
+            source.config["docs_advisory_audit_artifact"]
+            == "_workspace/2026-04-30_cycle69_mcp_docs_advisory_audit.json"
+        )
+        assert source.config["github_readme_present"] is True
+        assert source.config["github_docs_present"] is True
+        assert source.config["github_docs_paths"]
+        assert source.config["github_security_advisory_access_status"].startswith("checked")
+        assert source.config["github_security_advisory_count"] >= 0
+        if source.config.get("command_discovery_status"):
+            assert source.config["command_discovery_checked_at"]
+            assert (
+                source.config["command_discovery_artifact"]
+                == "_workspace/2026-04-30_cycle71_mcp_command_discovery_audit.json"
+            )
+        if "command_or_endpoint_unresolved" in source.config.get("activation_gates", []):
+            assert source.config["command_discovery_status"]
         if source.config["activation_status"] != "metadata_only":
             assert source.config["activation_audited_at"]
             assert source.config["activation_gates"]
@@ -105,6 +132,86 @@ def test_mcp_category_quality_config_tracks_mcp_event_models() -> None:
     assert isinstance(outputs, dict)
     assert outputs["tracked_event_models"] == [
         "mcp_directory_entry",
+        "mcp_tool_result",
         "linked_repository_metadata",
         "risk_scope_signal",
     ]
+
+
+def test_dooray_candidate_has_tool_allowlist_and_write_risk_gate() -> None:
+    category = load_category_config(_category_name())
+    source = _mcp_source(category, "kwanok/dooray-mcp")
+
+    assert source.enabled is False
+    assert source.config["activation_status"] == "blocked_env_required"
+    assert source.config["env"] == ["DOORAY_API_KEY"]
+    assert source.config["event_model"] == "mcp_tool_result"
+    assert "tool_resource_allowlist_required" not in source.config["activation_gates"]
+    assert "tool_allowlist_unresolved" not in source.config["risk_scope"]
+    assert "write_or_mutation_possible" in source.config["risk_scope"]
+    assert "user_account_scope" in source.config["risk_scope"]
+    assert len(source.config["tools"]) == 35
+    assert "dooray_list_tasks" in source.config["tools"]
+    assert "dooray_send_channel_message" in source.config["tools"]
+
+
+def test_dooray_go_candidate_command_and_tools_are_resolved() -> None:
+    category = load_category_config(_category_name())
+    source = _mcp_source(category, "dooray-go/dooray_mcp")
+
+    assert source.enabled is False
+    assert source.config["activation_status"] == "blocked_env_required"
+    assert source.config["command_discovery_status"] == "resolved_direct_binary"
+    assert source.config["command"] == "dooray-mcp"
+    assert source.config["args"] == ["--token", "<DOORAY_PERSONAL_TOKEN>"]
+    assert source.config["env"] == ["DOORAY_PERSONAL_TOKEN"]
+    assert source.config["event_model"] == "mcp_tool_result"
+    assert "command_or_endpoint_unresolved" not in source.config["activation_gates"]
+    assert "tool_resource_allowlist_required" not in source.config["activation_gates"]
+    assert "tool_allowlist_unresolved" not in source.config["risk_scope"]
+    assert "write_or_mutation_possible" in source.config["risk_scope"]
+    assert source.config["tools"] == [
+        "dooray_messenger",
+        "dooray_calendar_calendars",
+        "dooray_calendar_events",
+        "dooray_calendar_post_event",
+        "dooray_account_members",
+        "dooray_account_member",
+        "dooray_project",
+        "dooray_posts",
+        "os",
+    ]
+
+
+def test_dooray_go_candidate_has_fake_transport_evidence() -> None:
+    category = load_category_config(_category_name())
+    source = _mcp_source(category, "dooray-go/dooray_mcp")
+
+    assert source.config["fake_transport_smoke_test_status"] == "passed"
+    assert (
+        source.config["fake_transport_smoke_test_artifact"]
+        == "_workspace/2026-05-02_cycle85_collaboration_dooray_go_fake_probe.json"
+    )
+    assert (
+        source.config["fake_transport_fixture"]
+        == "fixtures/mcp/fake_dooray_go_dooray_mcp.py"
+    )
+    assert "fake_transport_smoke_test_required" not in source.config["activation_gates"]
+    assert "real_transport_smoke_test_required" in source.config["activation_gates"]
+
+
+def test_kwanok_dooray_candidate_has_fake_transport_evidence() -> None:
+    category = load_category_config(_category_name())
+    source = _mcp_source(category, "kwanok/dooray-mcp")
+
+    assert source.config["fake_transport_smoke_test_status"] == "passed"
+    assert (
+        source.config["fake_transport_smoke_test_artifact"]
+        == "_workspace/2026-05-02_cycle85_collaboration_kwanok_dooray_fake_probe.json"
+    )
+    assert (
+        source.config["fake_transport_fixture"]
+        == "fixtures/mcp/fake_kwanok_dooray_mcp.py"
+    )
+    assert "fake_transport_smoke_test_required" not in source.config["activation_gates"]
+    assert "real_transport_smoke_test_required" in source.config["activation_gates"]
