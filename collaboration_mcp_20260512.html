@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-visual-system="radar-unified-v2" data-visual-surface="report">
+<html lang="en" data-visual-system="radar-unified-v2" data-visual-surface="report" data-visual-page="daily-report">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,16 +12,27 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap">
   <style>
     :root {
-      --bg-page: #0b0b0f;
-      --bg-card: rgba(28, 26, 34, 0.86);
-      --bg-card-strong: rgba(36, 33, 43, 0.94);
-      --text-primary: #f4f4f7;
-      --text-secondary: rgba(244, 244, 247, 0.76);
-      --text-muted: rgba(244, 244, 247, 0.58);
-      --border-subtle: rgba(244, 244, 247, 0.14);
+      --vs-color-bg: #0b0b0f;
+      --vs-color-surface: rgba(28, 26, 34, 0.86);
+      --vs-color-surface-strong: rgba(36, 33, 43, 0.94);
+      --vs-color-text: #f4f4f7;
+      --vs-color-text-secondary: rgba(244, 244, 247, 0.76);
+      --vs-color-muted: rgba(244, 244, 247, 0.58);
+      --vs-color-border: rgba(244, 244, 247, 0.14);
+      --vs-color-accent: #33d6c5;
+      --vs-radius-sm: 6px;
+      --vs-radius-md: 8px;
+      --vs-font-sans: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --bg-page: var(--vs-color-bg);
+      --bg-card: var(--vs-color-surface);
+      --bg-card-strong: var(--vs-color-surface-strong);
+      --text-primary: var(--vs-color-text);
+      --text-secondary: var(--vs-color-text-secondary);
+      --text-muted: var(--vs-color-muted);
+      --border-subtle: var(--vs-color-border);
       --shadow-card: 0 14px 42px rgba(0,0,0,0.34);
       --shadow-card-hover: 0 18px 52px rgba(0,0,0,0.42);
-      --accent-teal: #33d6c5;
+      --accent-teal: var(--vs-color-accent);
       --accent-blue: #19b591;
       --accent-yellow: #f6c84c;
       --accent-indigo: #78a2ff;
@@ -31,11 +42,11 @@
       --error-bg: rgba(255, 91, 110, 0.13);
       --error-border: rgba(255, 91, 110, 0.28);
       --error-text: #ff9ca8;
-      --radius-sm: 6px;
-      --radius-md: 8px;
+      --radius-sm: var(--vs-radius-sm);
+      --radius-md: var(--vs-radius-md);
       --radius-full: 9999px;
       --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", "Courier New", monospace;
-      --font-sans: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-sans: var(--vs-font-sans);
     }
     * { box-sizing: border-box; }
     body {
@@ -249,7 +260,7 @@
     <header class="header">
       <div class="header__info">
         <h1 class="header__title">협업/커뮤니케이션 MCP 레이더</h1>
-        <div class="header__timestamp">Generated 2026-05-12T03:56:45.991775+00:00 UTC</div>
+        <div class="header__timestamp">Generated 2026-05-12T20:28:49.441060+00:00 UTC</div>
       </div>
       <div id="export-actions" class="export-actions"><button class="btn-export" id="btn-csv" onclick="exportCSV()">Export CSV</button></div>
     </header>
@@ -258,7 +269,7 @@
     <div class="summary-grid">
       <div class="stat-card">
         <div class="stat-card__label">Sources</div>
-        <div class="stat-card__value">1</div>
+        <div class="stat-card__value">3</div>
       </div>
       <div class="stat-card stat-card--blue">
         <div class="stat-card__label">Collected</div>
@@ -317,6 +328,48 @@
       </div>
     </div>
 
+    
+    <h2 class="section-title" id="mcp-quality-heading">MCP Source Quality</h2>
+    <section id="mcp-quality" class="quality-panel" aria-label="MCP source quality">
+      <div class="quality-grid">
+        <div class="quality-metric">
+          <span class="quality-metric__label">MCP candidates</span>
+          <span class="quality-metric__value">2</span>
+        </div>
+        <div class="quality-metric">
+          <span class="quality-metric__label">Enabled tools</span>
+          <span class="quality-metric__value">0</span>
+        </div>
+        <div class="quality-metric">
+          <span class="quality-metric__label">Tool results</span>
+          <span class="quality-metric__value">0</span>
+        </div>
+        <div class="quality-metric">
+          <span class="quality-metric__label">Metadata gaps</span>
+          <span class="quality-metric__value">0</span>
+        </div>
+        <div class="quality-metric">
+          <span class="quality-metric__label">Review items</span>
+          <span class="quality-metric__value">4</span>
+        </div>
+      </div>
+      
+      <p class="article-card__summary">collaboration_mcp treats the awesome-mcp-korea section as a T4 community directory seed. Repository metadata, API credential scope, and security context remain separate enrichment layers until archived, license, and advisory fields are collected.</p>
+      
+      
+      <ul class="quality-list">
+        
+        <li><strong>mcp_env_preflight_missing</strong> - dooray-go/dooray_mcp / dooray-go/dooray_mcp</li>
+        
+        <li><strong>mcp_candidate_disabled</strong> - dooray-go/dooray_mcp / dooray-go/dooray_mcp</li>
+        
+        <li><strong>mcp_env_preflight_missing</strong> - kwanok/dooray-mcp / kwanok/dooray-mcp</li>
+        
+        <li><strong>mcp_candidate_disabled</strong> - kwanok/dooray-mcp / kwanok/dooray-mcp</li>
+        
+      </ul>
+      
+    </section>
     
 
     <!-- Entity Hits -->
@@ -450,12 +503,12 @@
 
     <!-- Footer -->
     <footer class="footer">
-      Radar Report — generated 2026-05-12T03:56:45.991775+00:00 UTC
+      Radar Report — generated 2026-05-12T20:28:49.441060+00:00 UTC
     </footer>
   </div>
 
   <!-- Data blocks -->
-  <script id="articles-data" type="application/json">[{"collected_at": "2026-05-12T03:56:45.940717", "link": "https://github.com/hyeri0903/naver-works-mcp", "matched_entities": {"MCPDomain": ["naver works"], "ProjectHealth": ["mcp", "\uc11c\ubc84"], "Provider": ["naver", "naver works", "\ub124\uc774\ubc84"]}, "published": "2026-05-12T03:56:45.925635", "published_at": "2026-05-12T03:56:45.925635", "source": "awesome-mcp-korea Collaboration \u0026 Communication", "summary": "\ub124\uc774\ubc84 \uc6cd\uc2a4(Naver Works) API\ub97c \uc5f0\ub3d9\ud558\ub294 MCP \uc11c\ubc84\uc785\ub2c8\ub2e4.", "title": "hyeri0903/naver-works-mcp"}, {"collected_at": "2026-05-12T03:56:45.940717", "link": "https://github.com/mskim8717/dooray-mcp", "matched_entities": {"Capability": ["\uc77c\uc815"], "MCPDomain": ["dooray", "\uc77c\uc815"], "ProjectHealth": ["mcp", "\uc11c\ubc84"], "Provider": ["dooray"]}, "published": "2026-05-12T03:56:45.925633", "published_at": "2026-05-12T03:56:45.925633", "source": "awesome-mcp-korea Collaboration \u0026 Communication", "summary": "Dooray API\ub97c \ud65c\uc6a9\ud574 \uc77c\uc815 \ucd94\uac00 \ubc0f \uad00\ub9ac\ub97c \uc9c0\uc6d0\ud558\ub294 MCP \uc11c\ubc84\uc785\ub2c8\ub2e4.", "title": "mskim8717/dooray-mcp"}, {"collected_at": "2026-05-12T03:56:45.940717", "link": "https://github.com/kwanok/dooray-mcp", "matched_entities": {"Capability": ["\uba54\uc2e0\uc800"], "MCPDomain": ["dooray", "\uba54\uc2e0\uc800", "\uc5c5\ubb34"], "ProjectHealth": ["mcp", "\uc11c\ubc84", "\ub3c4\uad6c"], "Provider": ["dooray"]}, "published": "2026-05-12T03:56:45.925631", "published_at": "2026-05-12T03:56:45.925631", "source": "awesome-mcp-korea Collaboration \u0026 Communication", "summary": "Dooray \uc5c5\ubb34\u00b7\ub313\uae00\u00b7\ub9c8\uc77c\uc2a4\ud1a4\u00b7\ud0dc\uadf8\u00b7\uba64\ubc84\u00b7\uba54\uc2e0\uc800 \uae30\ub2a5\uc744 \ud3ec\ud568\ud55c 32\uac1c \ub3c4\uad6c\ub97c \uc81c\uacf5\ud558\ub294 MCP \uc11c\ubc84\uc785\ub2c8\ub2e4.", "title": "kwanok/dooray-mcp"}, {"collected_at": "2026-05-12T03:56:45.940717", "link": "https://github.com/dooray-go/dooray_mcp", "matched_entities": {"Capability": ["\uc870\ud68c", "\uba54\uc2e0\uc800", "\uc77c\uc815"], "MCPDomain": ["dooray", "\uba54\uc2e0\uc800", "\uc77c\uc815"], "ProjectHealth": ["mcp", "\uc11c\ubc84"], "Provider": ["dooray"], "RiskScope": ["\uba54\uc2e0\uc800 \ubcf4\ub0b4\uae30", "\uc77c\uc815 \ub4f1\ub85d"]}, "published": "2026-05-12T03:56:45.925615", "published_at": "2026-05-12T03:56:45.925615", "source": "awesome-mcp-korea Collaboration \u0026 Communication", "summary": "Dooray! \uba54\uc2e0\uc800 \ubcf4\ub0b4\uae30, \uce98\ub9b0\ub354 \uc870\ud68c \ubc0f \uc77c\uc815 \ub4f1\ub85d \uae30\ub2a5\uc744 \uc81c\uacf5\ud558\ub294 MCP \uc11c\ubc84\uc785\ub2c8\ub2e4.", "title": "dooray-go/dooray_mcp"}]</script>
+  <script id="articles-data" type="application/json">[{"collected_at": "2026-05-12T20:28:49.387539", "link": "https://github.com/hyeri0903/naver-works-mcp", "matched_entities": {"MCPDomain": ["naver works"], "ProjectHealth": ["mcp", "\uc11c\ubc84"], "Provider": ["naver", "naver works", "\ub124\uc774\ubc84"]}, "published": "2026-05-12T20:28:49.367543", "published_at": "2026-05-12T20:28:49.367543", "source": "awesome-mcp-korea Collaboration \u0026 Communication", "summary": "\ub124\uc774\ubc84 \uc6cd\uc2a4(Naver Works) API\ub97c \uc5f0\ub3d9\ud558\ub294 MCP \uc11c\ubc84\uc785\ub2c8\ub2e4.", "title": "hyeri0903/naver-works-mcp"}, {"collected_at": "2026-05-12T20:28:49.387539", "link": "https://github.com/mskim8717/dooray-mcp", "matched_entities": {"Capability": ["\uc77c\uc815"], "MCPDomain": ["dooray", "\uc77c\uc815"], "ProjectHealth": ["mcp", "\uc11c\ubc84"], "Provider": ["dooray"]}, "published": "2026-05-12T20:28:49.367541", "published_at": "2026-05-12T20:28:49.367541", "source": "awesome-mcp-korea Collaboration \u0026 Communication", "summary": "Dooray API\ub97c \ud65c\uc6a9\ud574 \uc77c\uc815 \ucd94\uac00 \ubc0f \uad00\ub9ac\ub97c \uc9c0\uc6d0\ud558\ub294 MCP \uc11c\ubc84\uc785\ub2c8\ub2e4.", "title": "mskim8717/dooray-mcp"}, {"collected_at": "2026-05-12T20:28:49.387539", "link": "https://github.com/kwanok/dooray-mcp", "matched_entities": {"Capability": ["\uba54\uc2e0\uc800"], "MCPDomain": ["dooray", "\uba54\uc2e0\uc800", "\uc5c5\ubb34"], "ProjectHealth": ["mcp", "\uc11c\ubc84", "\ub3c4\uad6c"], "Provider": ["dooray"]}, "published": "2026-05-12T20:28:49.367539", "published_at": "2026-05-12T20:28:49.367539", "source": "awesome-mcp-korea Collaboration \u0026 Communication", "summary": "Dooray \uc5c5\ubb34\u00b7\ub313\uae00\u00b7\ub9c8\uc77c\uc2a4\ud1a4\u00b7\ud0dc\uadf8\u00b7\uba64\ubc84\u00b7\uba54\uc2e0\uc800 \uae30\ub2a5\uc744 \ud3ec\ud568\ud55c 32\uac1c \ub3c4\uad6c\ub97c \uc81c\uacf5\ud558\ub294 MCP \uc11c\ubc84\uc785\ub2c8\ub2e4.", "title": "kwanok/dooray-mcp"}, {"collected_at": "2026-05-12T20:28:49.387539", "link": "https://github.com/dooray-go/dooray_mcp", "matched_entities": {"Capability": ["\uc870\ud68c", "\uba54\uc2e0\uc800", "\uc77c\uc815"], "MCPDomain": ["dooray", "\uba54\uc2e0\uc800", "\uc77c\uc815"], "ProjectHealth": ["mcp", "\uc11c\ubc84"], "Provider": ["dooray"], "RiskScope": ["\uba54\uc2e0\uc800 \ubcf4\ub0b4\uae30", "\uc77c\uc815 \ub4f1\ub85d"]}, "published": "2026-05-12T20:28:49.367526", "published_at": "2026-05-12T20:28:49.367526", "source": "awesome-mcp-korea Collaboration \u0026 Communication", "summary": "Dooray! \uba54\uc2e0\uc800 \ubcf4\ub0b4\uae30, \uce98\ub9b0\ub354 \uc870\ud68c \ubc0f \uc77c\uc815 \ub4f1\ub85d \uae30\ub2a5\uc744 \uc81c\uacf5\ud558\ub294 MCP \uc11c\ubc84\uc785\ub2c8\ub2e4.", "title": "dooray-go/dooray_mcp"}]</script>
   <script id="entities-data" type="application/json">{"Capability": 5, "MCPDomain": 9, "ProjectHealth": 9, "Provider": 6, "RiskScope": 2}</script>
 
   <!-- Chart.js: local first, CDN fallback -->

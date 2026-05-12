@@ -1,0 +1,67 @@
+{
+  "date": "2026-04-29",
+  "category": "collaboration_mcp",
+  "article_count": 1,
+  "source_count": 1,
+  "matched_count": 1,
+  "top_entities": [
+    {
+      "name": "MCPDomain",
+      "count": 3
+    },
+    {
+      "name": "Capability",
+      "count": 3
+    },
+    {
+      "name": "RiskScope",
+      "count": 2
+    },
+    {
+      "name": "ProjectHealth",
+      "count": 2
+    },
+    {
+      "name": "Provider",
+      "count": 1
+    }
+  ],
+  "sources": {
+    "awesome-mcp-korea Collaboration & Communication": 1
+  },
+  "generated_at": "2026-04-29T06:50:38.756006+00:00",
+  "ontology": {
+    "repo": "CollaborationMCPRadar",
+    "category": "collaboration_mcp",
+    "ontology_version": "0.1.0",
+    "event_model_ids": [
+      "mcp.directory_entry",
+      "mcp.tool_result",
+      "shared.linked_repository_metadata",
+      "shared.risk_scope_signal"
+    ],
+    "event_model_mappings": {
+      "mcp_directory_entry": "mcp.directory_entry",
+      "mcp_tool_result": "mcp.tool_result",
+      "linked_repository_metadata": "shared.linked_repository_metadata",
+      "risk_scope_signal": "shared.risk_scope_signal"
+    },
+    "entity_type_hints": [
+      "mcp.server",
+      "mcp.tool"
+    ],
+    "source_role_ids": [
+      "candidate_backlog",
+      "community_signal"
+    ],
+    "source_role_mappings": {
+      "awesome-mcp-korea Collaboration & Communication": "community_signal",
+      "dooray-go/dooray_mcp": "candidate_backlog",
+      "kwanok/dooray-mcp": "candidate_backlog"
+    },
+    "evidence_policy_ids": [
+      "traceable_url_required",
+      "write_action_risk_review_required"
+    ]
+  }
+}
