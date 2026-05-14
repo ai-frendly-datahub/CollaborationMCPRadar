@@ -1,6 +1,6 @@
 {
   "category": "collaboration_mcp",
-  "generated_at": "2026-05-14T02:28:19.348473+00:00",
+  "generated_at": "2026-05-14T07:45:39.393869+00:00",
   "scope_note": "collaboration_mcp treats the awesome-mcp-korea section as a T4 community directory seed. Repository metadata, API credential scope, and security context remain separate enrichment layers until archived, license, and advisory fields are collected.",
   "summary": {
     "total_sources": 3,
@@ -29,11 +29,11 @@
     "env_preflight_not_required_source_count": 0,
     "repository_metadata_complete_source_count": 2,
     "repository_metadata_gap_count": 0,
-    "repository_metadata_fresh_source_count": 2,
-    "repository_metadata_stale_source_count": 0,
+    "repository_metadata_fresh_source_count": 0,
+    "repository_metadata_stale_source_count": 2,
     "repository_metadata_incomplete_source_count": 0,
     "repository_metadata_missing_checked_at_source_count": 0,
-    "repository_metadata_review_required_count": 0,
+    "repository_metadata_review_required_count": 2,
     "repository_docs_present_source_count": 2,
     "repository_docs_missing_source_count": 0,
     "repository_security_policy_present_source_count": 0,
@@ -60,7 +60,7 @@
     "activation_real_transport_required_source_count": 2,
     "activation_runtime_review_required_source_count": 0,
     "activation_ready_for_fake_transport_source_count": 0,
-    "daily_review_item_count": 4,
+    "daily_review_item_count": 6,
     "mcp_directory_entry_events": 4,
     "mcp_tool_result_events": 0,
     "linked_repository_metadata_events": 2,
@@ -101,7 +101,7 @@
       "status": "fresh",
       "article_count": 4,
       "event_count": 4,
-      "latest_event_at": "2026-05-14T02:28:18.751885+00:00",
+      "latest_event_at": "2026-05-14T07:45:38.791632+00:00",
       "age_days": 0.0,
       "latest_title": "hyeri0903/naver-works-mcp",
       "latest_url": "https://github.com/hyeri0903/naver-works-mcp",
@@ -153,10 +153,10 @@
       ],
       "repository_metadata_gaps": [],
       "repository_metadata": {
-        "status": "fresh",
+        "status": "stale",
         "repository": "dooray-go/dooray_mcp",
         "checked_at": "2026-05-07T05:20:56+00:00",
-        "age_days": 6.88,
+        "age_days": 7.1,
         "freshness_sla_days": 7.0,
         "missing_fields": [],
         "github_pushed_at": "2026-05-01T11:08:10Z",
@@ -225,10 +225,10 @@
       ],
       "repository_metadata_gaps": [],
       "repository_metadata": {
-        "status": "fresh",
+        "status": "stale",
         "repository": "kwanok/dooray-mcp",
         "checked_at": "2026-05-07T05:20:56+00:00",
-        "age_days": 6.88,
+        "age_days": 7.1,
         "freshness_sla_days": 7.0,
         "missing_fields": [],
         "github_pushed_at": "2026-02-09T15:53:38Z",
@@ -274,7 +274,7 @@
       "event_model": "mcp_directory_entry",
       "title": "hyeri0903/naver-works-mcp",
       "url": "https://github.com/hyeri0903/naver-works-mcp",
-      "event_at": "2026-05-14T02:28:18.751885+00:00",
+      "event_at": "2026-05-14T07:45:38.791632+00:00",
       "mcp_domain": [
         "naver works"
       ],
@@ -300,7 +300,7 @@
       "event_model": "mcp_directory_entry",
       "title": "mskim8717/dooray-mcp",
       "url": "https://github.com/mskim8717/dooray-mcp",
-      "event_at": "2026-05-14T02:28:18.751883+00:00",
+      "event_at": "2026-05-14T07:45:38.791630+00:00",
       "mcp_domain": [
         "dooray",
         "일정"
@@ -327,7 +327,7 @@
       "event_model": "mcp_directory_entry",
       "title": "kwanok/dooray-mcp",
       "url": "https://github.com/kwanok/dooray-mcp",
-      "event_at": "2026-05-14T02:28:18.751881+00:00",
+      "event_at": "2026-05-14T07:45:38.791628+00:00",
       "mcp_domain": [
         "dooray",
         "메신저",
@@ -356,7 +356,7 @@
       "event_model": "mcp_directory_entry",
       "title": "dooray-go/dooray_mcp",
       "url": "https://github.com/dooray-go/dooray_mcp",
-      "event_at": "2026-05-14T02:28:18.751865+00:00",
+      "event_at": "2026-05-14T07:45:38.791609+00:00",
       "mcp_domain": [
         "dooray",
         "메신저",
@@ -389,7 +389,7 @@
       "event_model": "risk_scope_signal",
       "title": "dooray-go/dooray_mcp",
       "url": "https://github.com/dooray-go/dooray_mcp",
-      "event_at": "2026-05-14T02:28:18.751865+00:00",
+      "event_at": "2026-05-14T07:45:38.791609+00:00",
       "mcp_domain": [
         "dooray",
         "메신저",
@@ -436,7 +436,7 @@
         "security_advisory_check": true
       },
       "repository": "dooray-go/dooray_mcp",
-      "repository_metadata_status": "fresh",
+      "repository_metadata_status": "stale",
       "repository_metadata_checked_at": "2026-05-07T05:20:56+00:00",
       "github_pushed_at": "2026-05-01T11:08:10Z",
       "github_license": "NOASSERTION",
@@ -470,7 +470,7 @@
         "security_advisory_check": true
       },
       "repository": "kwanok/dooray-mcp",
-      "repository_metadata_status": "fresh",
+      "repository_metadata_status": "stale",
       "repository_metadata_checked_at": "2026-05-07T05:20:56+00:00",
       "github_pushed_at": "2026-02-09T15:53:38Z",
       "github_license": "NOASSERTION",
@@ -507,6 +507,14 @@
       ]
     },
     {
+      "reason": "repository_metadata_stale",
+      "source": "dooray-go/dooray_mcp",
+      "repository": "dooray-go/dooray_mcp",
+      "checked_at": "2026-05-07T05:20:56+00:00",
+      "age_days": 7.1,
+      "freshness_sla_days": 7.0
+    },
+    {
       "reason": "mcp_env_preflight_missing",
       "source": "kwanok/dooray-mcp",
       "repository": "kwanok/dooray-mcp",
@@ -523,6 +531,14 @@
       "activation_gates": [
         "real_transport_smoke_test_required"
       ]
+    },
+    {
+      "reason": "repository_metadata_stale",
+      "source": "kwanok/dooray-mcp",
+      "repository": "kwanok/dooray-mcp",
+      "checked_at": "2026-05-07T05:20:56+00:00",
+      "age_days": 7.1,
+      "freshness_sla_days": 7.0
     }
   ],
   "source_backlog": {
