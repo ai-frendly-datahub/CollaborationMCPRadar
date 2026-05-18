@@ -1,0 +1,33 @@
+{
+  "date": "2026-05-18",
+  "category": "collaboration_mcp",
+  "article_count": 4,
+  "source_count": 1,
+  "matched_count": 4,
+  "top_entities": [
+    {
+      "name": "MCPDomain",
+      "count": 9
+    },
+    {
+      "name": "ProjectHealth",
+      "count": 9
+    },
+    {
+      "name": "Provider",
+      "count": 6
+    },
+    {
+      "name": "Capability",
+      "count": 5
+    },
+    {
+      "name": "RiskScope",
+      "count": 2
+    }
+  ],
+  "sources": {
+    "awesome-mcp-korea Collaboration & Communication": 4
+  },
+  "generated_at": "2026-05-18T15:49:30.297341+00:00"
+}
