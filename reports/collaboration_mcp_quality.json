@@ -1,6 +1,6 @@
 {
   "category": "collaboration_mcp",
-  "generated_at": "2026-05-21T14:52:51.681642+00:00",
+  "generated_at": "2026-05-21T15:43:32.435213+00:00",
   "scope_note": "collaboration_mcp treats the awesome-mcp-korea section as a T4 community directory seed. Repository metadata, API credential scope, and security context remain separate enrichment layers until archived, license, and advisory fields are collected.",
   "summary": {
     "total_sources": 5,
@@ -96,8 +96,8 @@
       "status": "fresh",
       "article_count": 4,
       "event_count": 4,
-      "latest_event_at": "2026-05-21T14:20:08.085925+00:00",
-      "age_days": 0.02,
+      "latest_event_at": "2026-05-21T15:43:31.456476+00:00",
+      "age_days": 0.0,
       "latest_title": "hyeri0903/naver-works-mcp",
       "latest_url": "https://github.com/hyeri0903/naver-works-mcp",
       "latest_mcp_domain": [
@@ -154,7 +154,7 @@
         "status": "fresh",
         "repository": "dooray-go/dooray_mcp",
         "checked_at": "2026-05-21T08:07:15+00:00",
-        "age_days": 0.28,
+        "age_days": 0.32,
         "freshness_sla_days": 7.0,
         "missing_fields": [],
         "github_pushed_at": "2026-05-01T11:08:10Z",
@@ -226,7 +226,7 @@
         "status": "fresh",
         "repository": "kwanok/dooray-mcp",
         "checked_at": "2026-05-21T08:07:15+00:00",
-        "age_days": 0.28,
+        "age_days": 0.32,
         "freshness_sla_days": 7.0,
         "missing_fields": [],
         "github_pushed_at": "2026-02-09T15:53:38Z",
@@ -293,7 +293,7 @@
         "status": "fresh",
         "repository": "mskim8717/dooray-mcp",
         "checked_at": "2026-05-21T08:07:15+00:00",
-        "age_days": 0.28,
+        "age_days": 0.32,
         "freshness_sla_days": 7.0,
         "missing_fields": [],
         "github_pushed_at": "2025-05-07T13:53:20Z",
@@ -363,7 +363,7 @@
         "status": "incomplete",
         "repository": "hyeri0903/naver-works-mcp",
         "checked_at": "2026-05-21T08:07:15+00:00",
-        "age_days": 0.28,
+        "age_days": 0.32,
         "freshness_sla_days": 7.0,
         "missing_fields": [
           "github_archived",
@@ -410,7 +410,7 @@
       "event_model": "mcp_directory_entry",
       "title": "hyeri0903/naver-works-mcp",
       "url": "https://github.com/hyeri0903/naver-works-mcp",
-      "event_at": "2026-05-21T14:20:08.085925+00:00",
+      "event_at": "2026-05-21T15:43:31.456476+00:00",
       "mcp_domain": [
         "naver works"
       ],
@@ -440,7 +440,7 @@
       "event_model": "risk_scope_signal",
       "title": "hyeri0903/naver-works-mcp",
       "url": "https://github.com/hyeri0903/naver-works-mcp",
-      "event_at": "2026-05-21T14:20:08.085925+00:00",
+      "event_at": "2026-05-21T15:43:31.456476+00:00",
       "mcp_domain": [
         "naver works"
       ],
@@ -470,7 +470,7 @@
       "event_model": "mcp_directory_entry",
       "title": "mskim8717/dooray-mcp",
       "url": "https://github.com/mskim8717/dooray-mcp",
-      "event_at": "2026-05-21T14:20:08.085923+00:00",
+      "event_at": "2026-05-21T15:43:31.456474+00:00",
       "mcp_domain": [
         "dooray",
         "일정"
@@ -502,7 +502,7 @@
       "event_model": "risk_scope_signal",
       "title": "mskim8717/dooray-mcp",
       "url": "https://github.com/mskim8717/dooray-mcp",
-      "event_at": "2026-05-21T14:20:08.085923+00:00",
+      "event_at": "2026-05-21T15:43:31.456474+00:00",
       "mcp_domain": [
         "dooray",
         "일정"
@@ -534,7 +534,7 @@
       "event_model": "mcp_directory_entry",
       "title": "kwanok/dooray-mcp",
       "url": "https://github.com/kwanok/dooray-mcp",
-      "event_at": "2026-05-21T14:20:08.085921+00:00",
+      "event_at": "2026-05-21T15:43:31.456472+00:00",
       "mcp_domain": [
         "dooray",
         "메신저",
@@ -568,7 +568,7 @@
       "event_model": "risk_scope_signal",
       "title": "kwanok/dooray-mcp",
       "url": "https://github.com/kwanok/dooray-mcp",
-      "event_at": "2026-05-21T14:20:08.085921+00:00",
+      "event_at": "2026-05-21T15:43:31.456472+00:00",
       "mcp_domain": [
         "dooray",
         "메신저",
@@ -602,7 +602,7 @@
       "event_model": "mcp_directory_entry",
       "title": "dooray-go/dooray_mcp",
       "url": "https://github.com/dooray-go/dooray_mcp",
-      "event_at": "2026-05-21T14:20:08.085909+00:00",
+      "event_at": "2026-05-21T15:43:31.456457+00:00",
       "mcp_domain": [
         "dooray",
         "메신저",
@@ -639,7 +639,7 @@
       "event_model": "risk_scope_signal",
       "title": "dooray-go/dooray_mcp",
       "url": "https://github.com/dooray-go/dooray_mcp",
-      "event_at": "2026-05-21T14:20:08.085909+00:00",
+      "event_at": "2026-05-21T15:43:31.456457+00:00",
       "mcp_domain": [
         "dooray",
         "메신저",
