@@ -22,7 +22,7 @@ Collaboration & Communication 섹션의 한국 MCP 서버 목록을 수집하고
 
 ## 빠른 시작
 
-1. 가상환경을 만들고 의존성을 설치합니다.
+1. Python 3.11 이상 환경에서 가상환경을 만들고 의존성을 설치합니다.
    ```bash
    pip install -r requirements.txt
    ```

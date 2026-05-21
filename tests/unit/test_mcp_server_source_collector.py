@@ -6,14 +6,13 @@ import pytest
 
 from radar.collector import _collect_single, collect_sources
 from radar.exceptions import NetworkError, SourceError
-from radar.mcp_source import collect_mcp_server_source
+from radar.mcp_source import MCPSourceConfig, collect_mcp_server_source
 from radar.models import Source
-
 
 HANGING_MCP_SERVER = "import time; time.sleep(30)"
 
 
-def test_mcp_server_source_invokes_allowlisted_tool(monkeypatch) -> None:
+def test_mcp_server_source_invokes_allowlisted_tool(monkeypatch: pytest.MonkeyPatch) -> None:
     source = Source(
         name="Example MCP",
         type="mcp_server",
@@ -26,9 +25,9 @@ def test_mcp_server_source_invokes_allowlisted_tool(monkeypatch) -> None:
             "max_items": 5,
         },
     )
-    observed = {}
+    observed: dict[str, object] = {}
 
-    def fake_payloads(_source, config):
+    def fake_payloads(_source: Source, config: MCPSourceConfig) -> list[object]:
         observed["transport"] = config.transport
         observed["tool"] = config.tools[0].name
         observed["arguments"] = config.tools[0].arguments
@@ -64,7 +63,7 @@ def test_mcp_server_source_invokes_allowlisted_tool(monkeypatch) -> None:
     assert articles[0].category == "mcp"
 
 
-def test_disabled_mcp_server_source_is_not_executed(monkeypatch) -> None:
+def test_disabled_mcp_server_source_is_not_executed(monkeypatch: pytest.MonkeyPatch) -> None:
     source = Source(
         name="Disabled MCP",
         type="mcp_server",
@@ -73,7 +72,7 @@ def test_disabled_mcp_server_source_is_not_executed(monkeypatch) -> None:
         config={"transport": "stdio", "command": "should-not-run", "tools": ["search"]},
     )
 
-    def fail_if_called(_source, _config):
+    def fail_if_called(_source: Source, _config: MCPSourceConfig) -> list[object]:
         raise AssertionError("disabled MCP source should not be invoked")
 
     monkeypatch.setattr("radar.mcp_source.collect_mcp_payloads", fail_if_called)
@@ -89,7 +88,9 @@ def test_disabled_mcp_server_source_is_not_executed(monkeypatch) -> None:
     assert errors == []
 
 
-def test_required_env_missing_fails_before_process_launch(monkeypatch) -> None:
+def test_required_env_missing_fails_before_process_launch(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     monkeypatch.delenv("MCP_RADAR_TEST_API_KEY", raising=False)
     source = Source(
         name="Env-gated MCP",
@@ -109,7 +110,7 @@ def test_required_env_missing_fails_before_process_launch(monkeypatch) -> None:
         collect_mcp_server_source(source, category="mcp", limit=5, timeout=1)
 
 
-def test_mcp_payload_without_url_uses_safe_fallback(monkeypatch) -> None:
+def test_mcp_payload_without_url_uses_safe_fallback(monkeypatch: pytest.MonkeyPatch) -> None:
     source = Source(
         name="Fallback MCP",
         type="mcp_stdio",
@@ -118,7 +119,7 @@ def test_mcp_payload_without_url_uses_safe_fallback(monkeypatch) -> None:
         config={"command": "example-mcp", "tools": ["list_items"], "max_items": 1},
     )
 
-    def fake_payloads(_source, _config):
+    def fake_payloads(_source: Source, _config: MCPSourceConfig) -> list[object]:
         return [{"content": [{"type": "text", "text": "plain text result"}]}]
 
     monkeypatch.setattr("radar.mcp_source.collect_mcp_payloads", fake_payloads)
@@ -148,7 +149,9 @@ def test_stdio_runtime_timeout_reports_request_context() -> None:
         collect_mcp_server_source(source, category="mcp", limit=5, timeout=1)
 
 
-def test_dooray_go_fake_stdio_fixture_collects_tool_results(monkeypatch) -> None:
+def test_dooray_go_fake_stdio_fixture_collects_tool_results(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     monkeypatch.setenv("DOORAY_PERSONAL_TOKEN", "fixture-only")
     tools = [
         "dooray_messenger",
@@ -176,9 +179,7 @@ def test_dooray_go_fake_stdio_fixture_collects_tool_results(monkeypatch) -> None
         },
     )
 
-    articles = collect_mcp_server_source(
-        source, category="collaboration_mcp", limit=20, timeout=5
-    )
+    articles = collect_mcp_server_source(source, category="collaboration_mcp", limit=20, timeout=5)
 
     assert len(articles) == len(tools)
     for article in articles:
@@ -186,7 +187,9 @@ def test_dooray_go_fake_stdio_fixture_collects_tool_results(monkeypatch) -> None
         assert article.link.startswith("https://example.test/collaboration/dooray-go/")
 
 
-def test_kwanok_dooray_fake_stdio_fixture_collects_tool_results(monkeypatch) -> None:
+def test_kwanok_dooray_fake_stdio_fixture_collects_tool_results(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     monkeypatch.setenv("DOORAY_API_KEY", "fixture-only")
     tools = [
         "dooray_add_comment",
@@ -240,9 +243,7 @@ def test_kwanok_dooray_fake_stdio_fixture_collects_tool_results(monkeypatch) -> 
         },
     )
 
-    articles = collect_mcp_server_source(
-        source, category="collaboration_mcp", limit=50, timeout=10
-    )
+    articles = collect_mcp_server_source(source, category="collaboration_mcp", limit=50, timeout=10)
 
     assert len(articles) == len(tools)
     for article in articles:

@@ -149,6 +149,18 @@ def test_apply_entity_rules_ascii_keyword_ai_false_positives_eliminated() -> Non
     assert analyzed[2].matched_entities == {}
 
 
+def test_apply_entity_rules_ascii_keyword_matches_korean_suffix() -> None:
+    article = _make_article(
+        title="네이버 웍스 MCP",
+        summary="Naver Works API를 연동하는 MCP 서버입니다.",
+    )
+    entities = [EntityDefinition(name="risk", display_name="Risk", keywords=["api"])]
+
+    analyzed = apply_entity_rules([article], entities)
+
+    assert analyzed[0].matched_entities == {"risk": ["api"]}
+
+
 def test_apply_entity_rules_cjk_keyword_keeps_substring_matching() -> None:
     article = _make_article(title="최신 연구 동향", summary="인공지능 연구 논문 요약")
     entities = [EntityDefinition(name="topic", display_name="Topic", keywords=["인공지능"])]

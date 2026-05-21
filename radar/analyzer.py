@@ -39,7 +39,10 @@ def _is_ascii_only(keyword: str) -> bool:
 
 @lru_cache(maxsize=2048)
 def _compile_ascii_keyword_pattern(keyword: str) -> re.Pattern[str]:
-    return re.compile(r"\b" + re.escape(keyword) + r"\b", re.IGNORECASE)
+    return re.compile(
+        r"(?<![A-Za-z0-9_])" + re.escape(keyword) + r"(?![A-Za-z0-9_])",
+        re.IGNORECASE,
+    )
 
 
 def _get_korean_analyzer() -> _KoreanAnalyzerLike | None:
@@ -69,9 +72,9 @@ def apply_entity_rules(
 ) -> list[Article]:
     """Attach matched entity keywords to each article via simple keyword search."""
     analyzed: list[Article] = []
-    normalized_entities: list[
-        tuple[EntityDefinition, list[tuple[str, re.Pattern[str] | None]]]
-    ] = []
+    normalized_entities: list[tuple[EntityDefinition, list[tuple[str, re.Pattern[str] | None]]]] = (
+        []
+    )
     for entity in entities:
         normalized_keywords: list[tuple[str, re.Pattern[str] | None]] = []
         for keyword in entity.keywords:

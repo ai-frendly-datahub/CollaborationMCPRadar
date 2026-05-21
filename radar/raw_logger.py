@@ -4,6 +4,7 @@ import json
 from collections.abc import Iterable
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any, cast
 
 from .models import Article
 
@@ -18,13 +19,41 @@ class RawLogger:
         *,
         source_name: str,
         run_id: str | None = None,
+        dedupe_links: bool = False,
     ) -> Path:
         now = datetime.now(UTC)
         date_dir = self.raw_dir / now.date().isoformat()
         safe_source_name = source_name.replace("/", "_").replace("\\", "_")
-        filename = f"{safe_source_name}_{run_id}.jsonl" if run_id is not None else f"{safe_source_name}.jsonl"
+        filename = (
+            f"{safe_source_name}_{run_id}.jsonl"
+            if run_id is not None
+            else f"{safe_source_name}.jsonl"
+        )
         output_path = date_dir / filename
         output_path.parent.mkdir(parents=True, exist_ok=True)
+
+        if dedupe_links:
+            records_by_link: dict[str, dict[str, Any]] = {}
+            if output_path.exists():
+                try:
+                    for line in output_path.read_text(encoding="utf-8").splitlines():
+                        if not line.strip():
+                            continue
+                        record = cast(dict[str, Any], json.loads(line))
+                        link = str(record.get("link", ""))
+                        if link:
+                            records_by_link[link] = record
+                except (OSError, json.JSONDecodeError):
+                    records_by_link = {}
+
+            for article in articles:
+                records_by_link[article.link] = self._record(article, logged_at=now)
+
+            with output_path.open("w", encoding="utf-8") as handle:
+                for record in records_by_link.values():
+                    handle.write(json.dumps(record, ensure_ascii=False))
+                    handle.write("\n")
+            return output_path
 
         existing_links: set[str] = set()
         if run_id is not None and output_path.exists():
@@ -40,18 +69,22 @@ class RawLogger:
             for article in articles:
                 if run_id is not None and article.link in existing_links:
                     continue
-                record = {
-                    "title": article.title,
-                    "link": article.link,
-                    "summary": article.summary,
-                    "published": article.published.isoformat() if article.published else None,
-                    "source": article.source,
-                    "category": article.category,
-                    "matched_entities": article.matched_entities,
-                    "logged_at": now.isoformat(),
-                }
+                record = self._record(article, logged_at=now)
                 handle.write(json.dumps(record, ensure_ascii=False))
                 handle.write("\n")
                 if run_id is not None:
                     existing_links.add(article.link)
         return output_path
+
+    @staticmethod
+    def _record(article: Article, *, logged_at: datetime) -> dict[str, Any]:
+        return {
+            "title": article.title,
+            "link": article.link,
+            "summary": article.summary,
+            "published": article.published.isoformat() if article.published else None,
+            "source": article.source,
+            "category": article.category,
+            "matched_entities": article.matched_entities,
+            "logged_at": logged_at.isoformat(),
+        }

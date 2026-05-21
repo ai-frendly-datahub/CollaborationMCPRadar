@@ -14,7 +14,6 @@ from jinja2 import Environment, FileSystemLoader
 
 from .models import Article, CategoryConfig
 
-
 _TEMPLATE_DIR = Path(__file__).parent / "templates"
 
 
@@ -59,9 +58,11 @@ def generate_report(
             "published_at": article.published.isoformat() if article.published else None,
             "summary": article.summary,
             "matched_entities": article.matched_entities or {},
-            "collected_at": article.collected_at.isoformat()
-            if hasattr(article, "collected_at") and article.collected_at
-            else None,
+            "collected_at": (
+                article.collected_at.isoformat()
+                if hasattr(article, "collected_at") and article.collected_at
+                else None
+            ),
         }
         articles_json.append(article_data)
 
@@ -209,8 +210,7 @@ def _generate_summary_json(
         "source_count": int(stats.get("source_count", len(source_counts))),
         "matched_count": int(stats.get("matched_count", matched_count)),
         "top_entities": [
-            {"name": name, "count": count}
-            for name, count in entity_counts.most_common(20)
+            {"name": name, "count": count} for name, count in entity_counts.most_common(20)
         ],
         "sources": dict(source_counts),
         "generated_at": now.isoformat(),

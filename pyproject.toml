@@ -9,7 +9,7 @@ name = "collaboration-mcp"
 version = "0.2.0"
 description = "협업/커뮤니케이션 MCP 레이더 collector and report pipeline"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 license = {text = "MIT"}
 authors = [
     {name = "AI-Friendly DataHub", email = "zzragida@gmail.com"}
@@ -20,15 +20,15 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 
 dependencies = [
     "duckdb>=0.9.0",
     "feedparser>=6.0.0",
+    "pybreaker>=1.0.0",
     "tenacity>=8.0.0",
     "structlog>=23.0.0",
     "jinja2>=3.0.0",
@@ -42,7 +42,6 @@ dependencies = [
 [project.optional-dependencies]
 mcp = [
     "mcp>=1.0.0",
-    "pybreaker>=1.0.0",
 ]
 korean = [
     "kiwipiepy>=0.17",
@@ -93,6 +92,20 @@ extend-exclude = '''
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+extend-exclude = [
+    ".git",
+    "__pycache__",
+    "venv",
+    ".venv",
+    "build",
+    "dist",
+    "*.egg-info",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".ruff_cache",
+]
+
+[tool.ruff.lint]
 select = [
     "E",   # pycodestyle errors
     "W",   # pycodestyle warnings
@@ -107,26 +120,13 @@ select = [
 ignore = [
     "E501",  # line too long (handled by black)
 ]
-extend-exclude = [
-    ".git",
-    "__pycache__",
-    "venv",
-    ".venv",
-    "build",
-    "dist",
-    "*.egg-info",
-    ".pytest_cache",
-    ".mypy_cache",
-    ".ruff_cache",
-]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["radar"]
 force-single-line = false
-lines-after-imports = 2
 
 # Pytest configuration
 [tool.pytest.ini_options]

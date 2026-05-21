@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 import re
 import sys
+from collections.abc import Iterable
 from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
@@ -13,7 +14,6 @@ from typing import Any
 import duckdb
 import yaml
 from bs4 import BeautifulSoup
-
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -36,7 +36,9 @@ from radar.storage import RadarStorage  # noqa: E402
 def _category_name(project_root: Path = PROJECT_ROOT) -> str:
     configs = sorted((project_root / "config" / "categories").glob("*.yaml"))
     if len(configs) != 1:
-        raise RuntimeError(f"Expected exactly one category config in {project_root / 'config' / 'categories'}")
+        raise RuntimeError(
+            f"Expected exactly one category config in {project_root / 'config' / 'categories'}"
+        )
     return configs[0].stem
 
 
@@ -46,7 +48,9 @@ def _project_path(project_root: Path, raw_path: str | Path) -> Path:
 
 
 def _load_runtime_config(project_root: Path) -> dict[str, Any]:
-    raw = yaml.safe_load((project_root / "config" / "config.yaml").read_text(encoding="utf-8")) or {}
+    raw = (
+        yaml.safe_load((project_root / "config" / "config.yaml").read_text(encoding="utf-8")) or {}
+    )
     return raw if isinstance(raw, dict) else {}
 
 
@@ -194,19 +198,25 @@ def _articles_from_existing_report(
 
     html = report_path.read_text(encoding="utf-8")
     soup = BeautifulSoup(html, "html.parser")
-    generated_at = _report_generated_at(html) or _summary_generated_at(category.category_name, report_dir)
+    generated_at = _report_generated_at(html) or _summary_generated_at(
+        category.category_name, report_dir
+    )
     published = generated_at or datetime.now(UTC)
     source_name = category.sources[0].name if category.sources else ""
 
     articles: list[Article] = []
-    for article_tag in soup.find_all("article"):
+    for article_tag in soup.select("article, .article-card"):
         link_tag = article_tag.find("a", href=True)
         if link_tag is None:
             continue
         title = link_tag.get_text(" ", strip=True)
         link = str(link_tag.get("href", "")).strip()
-        summary_tag = article_tag.find("p")
+        summary_tag = article_tag.select_one(".article-card__summary") or article_tag.find("p")
         summary = summary_tag.get_text(" ", strip=True) if summary_tag else ""
+        source_tag = article_tag.select_one(".source-badge")
+        article_source = (
+            source_tag.get_text(" ", strip=True) if source_tag is not None else source_name
+        )
         entities = _entities_from_chips(article_tag.select(".chips span, .chip"))
         if not title or not link:
             continue
@@ -216,7 +226,7 @@ def _articles_from_existing_report(
                 link=link,
                 summary=summary,
                 published=published,
-                source=source_name,
+                source=article_source,
                 category=category.category_name,
                 matched_entities=entities,
                 collected_at=published,
@@ -233,7 +243,7 @@ def _latest_report_path(category_name: str, report_dir: Path) -> Path | None:
     return candidates[-1] if candidates else None
 
 
-def _entities_from_chips(chips: list[object]) -> dict[str, list[str]]:
+def _entities_from_chips(chips: Iterable[object]) -> dict[str, list[str]]:
     entities: dict[str, list[str]] = {}
     for chip in chips:
         text = chip.get_text(" ", strip=True) if hasattr(chip, "get_text") else ""
@@ -247,14 +257,16 @@ def _entities_from_chips(chips: list[object]) -> dict[str, list[str]]:
 
 
 def _report_generated_at(html: str) -> datetime | None:
-    match = re.search(r"Generated:\s*([0-9T:\-+\.]+)", html)
+    match = re.search(r"Generated:?\s*([0-9T:\-+\.]+)", html)
     if not match:
         return None
     return _parse_datetime(match.group(1))
 
 
 def _summary_generated_at(category_name: str, report_dir: Path) -> datetime | None:
-    summary_files = sorted(report_dir.glob(f"{category_name}_*_summary.json"), key=lambda path: path.name)
+    summary_files = sorted(
+        report_dir.glob(f"{category_name}_*_summary.json"), key=lambda path: path.name
+    )
     if not summary_files:
         return None
     data = json.loads(summary_files[-1].read_text(encoding="utf-8"))

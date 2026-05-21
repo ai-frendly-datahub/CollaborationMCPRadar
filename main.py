@@ -4,16 +4,21 @@ import argparse
 from datetime import UTC
 from pathlib import Path
 from typing import Any, cast
-from radar.config_loader import filter_sources
 
 from radar.analyzer import apply_entity_rules
 from radar.collector import collect_sources
 from radar.common.validators import validate_article
-from radar.config_loader import load_category_config, load_category_quality_config, load_settings
+from radar.config_loader import (
+    filter_sources,
+    load_category_config,
+    load_category_quality_config,
+    load_notification_config,
+    load_settings,
+)
 from radar.date_storage import apply_date_storage_policy
 from radar.models import Article
-from radar.quality_report import build_quality_report, write_quality_report
 from radar.ontology import annotate_articles_with_ontology
+from radar.quality_report import build_quality_report, write_quality_report
 from radar.raw_logger import RawLogger
 from radar.reporter import generate_index_html, generate_report
 from radar.search_index import SearchIndex
@@ -32,12 +37,6 @@ def _send_notifications(
     import os
     from datetime import datetime
 
-    email_to = os.environ.get("NOTIFICATION_EMAIL")
-    webhook_url = os.environ.get("NOTIFICATION_WEBHOOK")
-
-    if not email_to and not webhook_url:
-        return
-
     from radar.notifier import (
         CompositeNotifier,
         EmailNotifier,
@@ -45,6 +44,10 @@ def _send_notifications(
         Notifier,
         WebhookNotifier,
     )
+
+    notification_cfg = load_notification_config()
+    legacy_email_to = os.environ.get("NOTIFICATION_EMAIL")
+    legacy_webhook_url = os.environ.get("NOTIFICATION_WEBHOOK")
 
     payload = NotificationPayload(
         category_name=category_name,
@@ -57,7 +60,26 @@ def _send_notifications(
     )
 
     notifiers: list[Notifier] = []
-    if email_to:
+    channels = {channel.strip().lower() for channel in notification_cfg.channels}
+    if notification_cfg.enabled and notification_cfg.email and "email" in channels:
+        email = notification_cfg.email
+        to_addrs = [addr for addr in email.to_addresses if addr.strip()]
+        if to_addrs:
+            notifiers.append(
+                EmailNotifier(
+                    smtp_host=email.smtp_host,
+                    smtp_port=email.smtp_port,
+                    smtp_user=email.username,
+                    smtp_password=email.password,
+                    from_addr=email.from_address,
+                    to_addrs=to_addrs,
+                )
+            )
+
+    if notification_cfg.enabled and notification_cfg.webhook_url and "webhook" in channels:
+        notifiers.append(WebhookNotifier(url=notification_cfg.webhook_url))
+
+    if legacy_email_to:
         notifiers.append(
             EmailNotifier(
                 smtp_host=os.environ.get("SMTP_HOST", "localhost"),
@@ -65,11 +87,11 @@ def _send_notifications(
                 smtp_user=os.environ.get("SMTP_USER", ""),
                 smtp_password=os.environ.get("SMTP_PASSWORD", ""),
                 from_addr=os.environ.get("SMTP_FROM", ""),
-                to_addrs=[email_to],
+                to_addrs=[legacy_email_to],
             )
         )
-    if webhook_url:
-        notifiers.append(WebhookNotifier(url=webhook_url))
+    if legacy_webhook_url:
+        notifiers.append(WebhookNotifier(url=legacy_webhook_url))
 
     if notifiers:
         composite = CompositeNotifier(notifiers)
@@ -88,6 +110,7 @@ def run(
     keep_raw_days: int = 180,
     keep_report_days: int = 90,
     snapshot_db: bool = False,
+    generate_html_report: bool = True,
     max_sources: int | None = None,
     exclude_sources: tuple[str, ...] | list[str] = (),
 ) -> Path:
@@ -122,13 +145,13 @@ def run(
         attach_event_model_payload=True,
     )
 
+    analyzed = apply_entity_rules(collected, category_cfg.entities)
+
     raw_logger = RawLogger(settings.raw_data_dir)
     for source in effective_sources:
-        source_articles = [article for article in collected if article.source == source.name]
+        source_articles = [article for article in analyzed if article.source == source.name]
         if source_articles:
-            _ = raw_logger.log(source_articles, source_name=source.name)
-
-    analyzed = apply_entity_rules(collected, category_cfg.entities)
+            _ = raw_logger.log(source_articles, source_name=source.name, dedupe_links=True)
 
     # Validate articles for data quality
     validated_articles: list[Article] = []
@@ -186,16 +209,19 @@ def run(
         category_name=category_cfg.category_name,
     )
     output_path = settings.report_dir / f"{category_cfg.category_name}_report.html"
-    _ = generate_report(
-        category=cast(Any, category_cfg),
-        articles=cast(Any, recent_articles),
-        output_path=output_path,
-        stats=stats,
-        errors=errors,
-        quality_report=quality_report,
-    )
-    _ = generate_index_html(settings.report_dir)
-    print(f"[Radar] Report generated at {output_path}")
+    if generate_html_report:
+        _ = generate_report(
+            category=cast(Any, category_cfg),
+            articles=cast(Any, recent_articles),
+            output_path=output_path,
+            stats=stats,
+            errors=errors,
+            quality_report=quality_report,
+        )
+        _ = generate_index_html(settings.report_dir)
+        print(f"[Radar] Report generated at {output_path}")
+    else:
+        print("[Radar] HTML report generation skipped.")
     print(f"[Radar] Quality report generated at {quality_paths['latest']}")
     date_storage = apply_date_storage_policy(
         database_path=settings.database_path,
@@ -211,13 +237,14 @@ def run(
     if errors:
         print(f"[Radar] {len(errors)} source(s) had issues. See report for details.")
 
+    notification_report_path = output_path if generate_html_report else quality_paths["latest"]
     _send_notifications(
         category_name=category_cfg.category_name,
         sources_count=len(effective_sources),
         collected_count=len(collected),
         matched_count=sum(1 for a in collected if a.matched_entities),
         errors_count=len(errors),
-        report_path=output_path,
+        report_path=notification_report_path,
     )
 
     return output_path
@@ -261,8 +288,15 @@ def parse_args() -> argparse.Namespace:
     _ = parser.add_argument(
         "--generate-report",
         action="store_true",
-        default=False,
-        help="Generate HTML report after collection",
+        dest="generate_report",
+        default=True,
+        help="Generate HTML report after collection (default; kept for compatibility)",
+    )
+    _ = parser.add_argument(
+        "--skip-report",
+        action="store_false",
+        dest="generate_report",
+        help="Skip HTML report/index generation after collection",
     )
     _ = parser.add_argument(
         "--max-sources",
@@ -299,8 +333,6 @@ def _to_int(value: object, default: int) -> int:
     return default
 
 
-
-
 def _to_optional_int(value: object) -> int | None:
     if value is None:
         return None
@@ -320,6 +352,8 @@ def _to_str_list(value: object) -> list[str]:
     if isinstance(value, list):
         return [str(item) for item in cast(list[object], value) if isinstance(item, str)]
     return []
+
+
 if __name__ == "__main__":
     args = cast(dict[str, object], vars(parse_args()))
     _ = run(
@@ -333,6 +367,7 @@ if __name__ == "__main__":
         keep_raw_days=_to_int(args.get("keep_raw_days"), 180),
         keep_report_days=_to_int(args.get("keep_report_days"), 90),
         snapshot_db=bool(args.get("snapshot_db", False)),
+        generate_html_report=bool(args.get("generate_report", True)),
         max_sources=_to_optional_int(args.get("max_sources")),
         exclude_sources=_to_str_list(args.get("exclude_source")),
     )

@@ -114,9 +114,9 @@ sources:
     package_registry_crosscheck_status: "not_applicable_direct_binary"
     package_registry_crosscheck_artifact: "_workspace/2026-05-07_mcp_registry_crosscheck_gate_closure.json"
     package_registry_crosscheck_source: "not_applicable_direct_binary"
-    metadata_checked_at: '2026-05-07T05:20:56+00:00'
+    metadata_checked_at: '2026-05-21T08:07:15+00:00'
     metadata_refresh_status: passed
-    metadata_refresh_artifact: _workspace/2026-05-07_mcp_github_repository_metadata_refresh.json
+    metadata_refresh_artifact: _workspace/2026-05-21_mcp_github_repository_metadata_refresh.json
     metadata_refresh_source: github_rest_api
     github_archived: false
     github_disabled: false
@@ -210,9 +210,9 @@ sources:
     package_registry_crosscheck_status: "not_applicable_git_repository_install"
     package_registry_crosscheck_artifact: "_workspace/2026-05-07_mcp_registry_crosscheck_gate_closure.json"
     package_registry_crosscheck_source: "not_applicable_git_repository_install"
-    metadata_checked_at: '2026-05-07T05:20:56+00:00'
+    metadata_checked_at: '2026-05-21T08:07:15+00:00'
     metadata_refresh_status: passed
-    metadata_refresh_artifact: _workspace/2026-05-07_mcp_github_repository_metadata_refresh.json
+    metadata_refresh_artifact: _workspace/2026-05-21_mcp_github_repository_metadata_refresh.json
     metadata_refresh_source: github_rest_api
     github_archived: false
     github_disabled: false
@@ -294,6 +294,117 @@ sources:
     activation_gates:
     - real_transport_smoke_test_required
     event_model: mcp_tool_result
+- id: mcp_candidate_mskim8717_dooray_mcp
+  name: mskim8717/dooray-mcp
+  type: mcp_server
+  enabled: false
+  url: https://github.com/mskim8717/dooray-mcp
+  transport: stdio
+  trust_tier: T4_community
+  collection_tier: C4_mcp_tool
+  content_type: mcp_tool_result
+  risk_scope:
+  - external_api_key
+  - network_read
+  - user_account_scope
+  - write_or_mutation_possible
+  notes: Metadata-only candidate added from the Collaboration & Communication directory
+    seed on 2026-05-21. Source remains disabled until tool allowlist, environment
+    contract, and transport smoke evidence are audited.
+  config:
+    repository: mskim8717/dooray-mcp
+    source_seed: awesome-mcp-korea
+    source_section: Collaboration & Communication
+    activation_status: metadata_only
+    metadata_checked_at: '2026-05-21T08:07:15+00:00'
+    metadata_refresh_status: passed
+    metadata_refresh_artifact: _workspace/2026-05-21_mcp_github_repository_metadata_refresh.json
+    metadata_refresh_source: github_rest_api
+    github_archived: false
+    github_disabled: false
+    github_license: MIT
+    github_pushed_at: '2025-05-07T13:53:20Z'
+    github_default_branch: main
+    github_stars: 2
+    github_head_sha: 29c3d6bffc74467f30cf2546a100f245e79cc0c2
+    docs_advisory_checked_at: '2026-05-21T08:07:15+00:00'
+    docs_advisory_audit_status: passed
+    docs_advisory_audit_artifact: _workspace/2026-05-21_collaboration_mcp_docs_advisory_audit.json
+    docs_advisory_audit_source: github_rest_api_contents_and_security_advisories
+    github_readme_present: true
+    github_readme_path: README.md
+    github_readme_size: 1955
+    github_docs_present: true
+    github_docs_paths:
+      - README.md
+    github_docs_path_count: 1
+    github_security_policy_present: false
+    github_security_policy_paths: []
+    github_security_advisory_access_status: checked
+    github_security_advisory_count: 0
+    github_security_advisory_open_count: 0
+    github_security_advisory_published_count: 0
+    github_security_advisory_state_counts: {}
+    github_security_advisory_ids: []
+    tools: []
+    resources: []
+    event_model: mcp_tool_result
+- id: mcp_candidate_hyeri0903_naver_works_mcp
+  name: hyeri0903/naver-works-mcp
+  type: mcp_server
+  enabled: false
+  url: https://github.com/hyeri0903/naver-works-mcp
+  transport: stdio
+  trust_tier: T4_community
+  collection_tier: C4_mcp_tool
+  content_type: mcp_tool_result
+  risk_scope:
+  - external_api_key
+  - network_read
+  - user_account_scope
+  - write_or_mutation_possible
+  notes: Metadata-only candidate added from the Collaboration & Communication directory
+    seed on 2026-05-21. GitHub repository lookup currently returns 404, so this
+    source is retained as a directory-vs-repository metadata gap instead of an
+    activatable MCP source.
+  config:
+    repository: hyeri0903/naver-works-mcp
+    source_seed: awesome-mcp-korea
+    source_section: Collaboration & Communication
+    activation_status: metadata_only
+    metadata_checked_at: '2026-05-21T08:07:15+00:00'
+    metadata_refresh_status: not_found
+    metadata_refresh_artifact: _workspace/2026-05-21_mcp_github_repository_metadata_refresh.json
+    metadata_refresh_source: github_rest_api
+    metadata_refresh_error: github_repository_not_found
+    github_archived: null
+    github_disabled: null
+    github_license: ''
+    github_pushed_at: ''
+    github_default_branch: ''
+    github_stars: 0
+    github_head_sha: ''
+    docs_advisory_checked_at: '2026-05-21T08:07:15+00:00'
+    docs_advisory_audit_status: repository_not_found
+    docs_advisory_audit_artifact: _workspace/2026-05-21_collaboration_mcp_docs_advisory_audit.json
+    docs_advisory_audit_source: github_rest_api_repository_404
+    github_readme_present: false
+    github_readme_path: ''
+    github_readme_size: 0
+    github_docs_present: false
+    github_docs_paths: []
+    github_docs_path_count: 0
+    github_security_policy_present: false
+    github_security_policy_paths: []
+    github_security_advisory_access_status: checked_repository_not_found
+    github_security_advisory_count: 0
+    github_security_advisory_open_count: 0
+    github_security_advisory_published_count: 0
+    github_security_advisory_state_counts: {}
+    github_security_advisory_ids: []
+    tools: []
+    resources: []
+    event_model: mcp_tool_result
 entities:
 - name: MCPDomain
   display_name: MCP 도메인
@@ -355,14 +466,42 @@ entities:
   - rest api
   - api key
   - credential
+  - send
+  - create
+  - update
+  - delete
+  - add
+  - post
+  - comment
+  - task
+  - workflow
+  - member
+  - channel
+  - event
   - order
   - message
   - calendar
   - location
   - document
   - 주문
+  - 보내기
+  - 생성
+  - 수정
+  - 삭제
+  - 추가
+  - 댓글
+  - 업무
+  - 태스크
+  - 워크플로
+  - 멤버
+  - 채널
+  - 이벤트
   - 메신저 보내기
+  - 메신저
   - 일정 등록
+  - 일정
+  - 캘린더
+  - 연동
   - 위치
   - 문서
   - 개인정보

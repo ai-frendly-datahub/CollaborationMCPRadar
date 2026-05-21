@@ -137,7 +137,8 @@ def _shadow_default_published_at(article: object) -> str | None:
     iso = getattr(value, "isoformat", None)
     if callable(iso):
         try:
-            return iso()
+            text = str(iso()).strip()
+            return text or None
         except (TypeError, ValueError):
             return None
     text = str(value).strip()
@@ -215,8 +216,6 @@ def _shadow_build_event_model_payload(
     return payload
 
 
-
-
 def _shadow_extract_source_payload_overrides(source: object) -> Mapping[str, object] | None:
     if source is None:
         return None
@@ -265,11 +264,7 @@ def annotate_articles_with_ontology(
         )
         if metadata is None:
             continue
-        if (
-            attach_event_model_payload
-            and source_event_model
-            and metadata.get("event_model_id")
-        ):
+        if attach_event_model_payload and source_event_model and metadata.get("event_model_id"):
             if explicit_overrides:
                 source_overrides = overrides_table.get(source_name)
             else:
@@ -284,7 +279,7 @@ def annotate_articles_with_ontology(
             )
             if payload:
                 metadata["event_model_payload"] = payload
-        setattr(article, "ontology", metadata)
+        article.ontology = metadata
     return articles
 
 
@@ -319,9 +314,7 @@ def backfill_duckdb_ontology(
         if "ontology_json" not in existing_columns or "link" not in existing_columns:
             return counts
 
-        rows = conn.execute(
-            f"SELECT link, source, ontology_json FROM {quoted_table}"
-        ).fetchall()
+        rows = conn.execute(f"SELECT link, source, ontology_json FROM {quoted_table}").fetchall()
         updates: list[tuple[str, str]] = []
         for link, source_name, existing_ontology_json in rows:
             counts["scanned"] += 1

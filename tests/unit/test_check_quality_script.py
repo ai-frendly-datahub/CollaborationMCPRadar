@@ -3,14 +3,16 @@ from __future__ import annotations
 import importlib.util
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import Any
 
+import pytest
 import yaml
 
 from radar.models import Article
 from radar.storage import RadarStorage
 
 
-def _load_script_module():
+def _load_script_module() -> Any:
     script_path = Path(__file__).resolve().parents[2] / "scripts" / "check_quality.py"
     spec = importlib.util.spec_from_file_location("mcp_check_quality_script", script_path)
     assert spec is not None and spec.loader is not None
@@ -21,7 +23,7 @@ def _load_script_module():
 
 def test_generate_quality_artifacts_uses_latest_stored_checkpoint(
     tmp_path: Path,
-    capsys,
+    capsys: pytest.CaptureFixture[str],
 ) -> None:
     project_root = tmp_path
     (project_root / "config" / "categories").mkdir(parents=True)
@@ -120,3 +122,76 @@ def test_generate_quality_artifacts_uses_latest_stored_checkpoint(
     assert "quality_report=" in captured.out
     assert "tracked_sources=1" in captured.out
     assert "mcp_signal_event_count=2" in captured.out
+
+
+def test_generate_quality_artifacts_uses_article_card_html_fallback(tmp_path: Path) -> None:
+    project_root = tmp_path
+    (project_root / "config" / "categories").mkdir(parents=True)
+    (project_root / "reports").mkdir()
+
+    (project_root / "config" / "config.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "database_path": "data/missing.duckdb",
+                "report_dir": "reports",
+            },
+            allow_unicode=True,
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+    (project_root / "config" / "categories" / "test_mcp.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "category_name": "test_mcp",
+                "display_name": "Test MCP",
+                "sources": [
+                    {
+                        "name": "awesome-mcp-directory",
+                        "type": "github_readme_section",
+                        "url": "https://github.com/example/awesome-mcp#finance",
+                        "enabled": True,
+                        "section": "Finance",
+                        "content_type": "directory",
+                    }
+                ],
+                "entities": [],
+                "data_quality": {
+                    "quality_outputs": {
+                        "tracked_event_models": [
+                            "mcp_directory_entry",
+                            "risk_scope_signal",
+                        ]
+                    }
+                },
+            },
+            allow_unicode=True,
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+    (project_root / "reports" / "test_mcp_report.html").write_text(
+        """
+        <html><body>
+          <div class="header__timestamp">Generated 2026-04-14T00:00:00+00:00 UTC</div>
+          <div class="article-card">
+            <div class="article-card__title">
+              <a href="https://github.com/example/mcp-server">MCP Server</a>
+            </div>
+            <span class="source-badge">awesome-mcp-directory</span>
+            <div class="article-card__summary">Read-only lookup MCP server</div>
+            <span class="chip">RiskScope: api, read</span>
+          </div>
+        </body></html>
+        """,
+        encoding="utf-8",
+    )
+
+    module = _load_script_module()
+    paths, report, articles = module.generate_quality_artifacts(project_root)
+
+    assert Path(paths["latest"]).exists()
+    assert len(articles) == 1
+    assert articles[0].source == "awesome-mcp-directory"
+    assert articles[0].matched_entities == {"RiskScope": ["api", "read"]}
+    assert report["summary"]["mcp_directory_entry_events"] == 1

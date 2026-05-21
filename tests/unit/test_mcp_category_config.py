@@ -5,7 +5,7 @@ from pathlib import Path
 from radar.analyzer import apply_entity_rules
 from radar.collector import parse_markdown_section_items
 from radar.config_loader import load_category_config, load_category_quality_config
-from radar.models import Article
+from radar.models import Article, CategoryConfig, Source
 
 
 def _category_name() -> str:
@@ -14,13 +14,13 @@ def _category_name() -> str:
     return configs[0].stem
 
 
-def _seed_source(category):
+def _seed_source(category: CategoryConfig) -> Source:
     seeds = [source for source in category.sources if source.type == "github_readme_section"]
     assert len(seeds) == 1
     return seeds[0]
 
 
-def _mcp_source(category, repository: str):
+def _mcp_source(category: CategoryConfig, repository: str) -> Source:
     return next(
         source
         for source in category.sources
@@ -33,7 +33,10 @@ def test_mcp_category_config_uses_readme_section_source() -> None:
 
     source = _seed_source(category)
     assert source.type == "github_readme_section"
-    assert source.url == "https://raw.githubusercontent.com/darjeeling/awesome-mcp-korea/main/README.md"
+    assert (
+        source.url
+        == "https://raw.githubusercontent.com/darjeeling/awesome-mcp-korea/main/README.md"
+    )
     assert source.section
     assert source.trust_tier == "T4_community"
     assert source.collection_tier == "C1_static_list"
@@ -94,6 +97,7 @@ def test_mcp_server_sources_are_disabled_metadata_candidates() -> None:
         "fake_transport_smoke_test_passed",
     }
     for source in candidates:
+        metadata_refresh_status = str(source.config.get("metadata_refresh_status") or "")
         assert source.enabled is False
         assert source.collection_tier == "C4_mcp_tool"
         assert source.content_type == "mcp_tool_result"
@@ -101,14 +105,18 @@ def test_mcp_server_sources_are_disabled_metadata_candidates() -> None:
         assert source.config["repository"]
         assert isinstance(source.config.get("tools", []), list)
         assert isinstance(source.config.get("resources", []), list)
-        assert source.config["docs_advisory_audit_status"] == "passed"
-        assert (
-            source.config["docs_advisory_audit_artifact"]
-            == "_workspace/2026-04-30_cycle69_mcp_docs_advisory_audit.json"
-        )
-        assert source.config["github_readme_present"] is True
-        assert source.config["github_docs_present"] is True
-        assert source.config["github_docs_paths"]
+        assert metadata_refresh_status in {"passed", "not_found"}
+        assert source.config["docs_advisory_audit_artifact"]
+        if metadata_refresh_status == "not_found":
+            assert source.config["docs_advisory_audit_status"] == "repository_not_found"
+            assert source.config["github_readme_present"] is False
+            assert source.config["github_docs_present"] is False
+            assert source.config["github_docs_paths"] == []
+        else:
+            assert source.config["docs_advisory_audit_status"] == "passed"
+            assert source.config["github_readme_present"] is True
+            assert source.config["github_docs_present"] is True
+            assert source.config["github_docs_paths"]
         assert source.config["github_security_advisory_access_status"].startswith("checked")
         assert source.config["github_security_advisory_count"] >= 0
         if source.config.get("command_discovery_status"):
@@ -122,6 +130,22 @@ def test_mcp_server_sources_are_disabled_metadata_candidates() -> None:
         if source.config["activation_status"] != "metadata_only":
             assert source.config["activation_audited_at"]
             assert source.config["activation_gates"]
+
+
+def test_mcp_category_config_covers_current_directory_seed_repositories() -> None:
+    category = load_category_config(_category_name())
+    candidate_repositories = {
+        str(source.config.get("repository"))
+        for source in category.sources
+        if source.type == "mcp_server"
+    }
+
+    assert candidate_repositories >= {
+        "dooray-go/dooray_mcp",
+        "kwanok/dooray-mcp",
+        "mskim8717/dooray-mcp",
+        "hyeri0903/naver-works-mcp",
+    }
 
 
 def test_mcp_category_quality_config_tracks_mcp_event_models() -> None:
@@ -192,10 +216,7 @@ def test_dooray_go_candidate_has_fake_transport_evidence() -> None:
         source.config["fake_transport_smoke_test_artifact"]
         == "_workspace/2026-05-02_cycle85_collaboration_dooray_go_fake_probe.json"
     )
-    assert (
-        source.config["fake_transport_fixture"]
-        == "fixtures/mcp/fake_dooray_go_dooray_mcp.py"
-    )
+    assert source.config["fake_transport_fixture"] == "fixtures/mcp/fake_dooray_go_dooray_mcp.py"
     assert "fake_transport_smoke_test_required" not in source.config["activation_gates"]
     assert "real_transport_smoke_test_required" in source.config["activation_gates"]
 
@@ -209,9 +230,6 @@ def test_kwanok_dooray_candidate_has_fake_transport_evidence() -> None:
         source.config["fake_transport_smoke_test_artifact"]
         == "_workspace/2026-05-02_cycle85_collaboration_kwanok_dooray_fake_probe.json"
     )
-    assert (
-        source.config["fake_transport_fixture"]
-        == "fixtures/mcp/fake_kwanok_dooray_mcp.py"
-    )
+    assert source.config["fake_transport_fixture"] == "fixtures/mcp/fake_kwanok_dooray_mcp.py"
     assert "fake_transport_smoke_test_required" not in source.config["activation_gates"]
     assert "real_transport_smoke_test_required" in source.config["activation_gates"]

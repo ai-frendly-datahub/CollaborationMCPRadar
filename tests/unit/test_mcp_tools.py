@@ -12,8 +12,7 @@ from radar.search_index import SearchIndex
 def _init_articles_table(db_path: Path) -> None:
     conn = duckdb.connect(str(db_path))
     try:
-        _ = conn.execute(
-            """
+        _ = conn.execute("""
             CREATE TABLE articles (
                 id BIGINT PRIMARY KEY,
                 category TEXT NOT NULL,
@@ -25,8 +24,7 @@ def _init_articles_table(db_path: Path) -> None:
                 collected_at TIMESTAMP NOT NULL,
                 entities_json TEXT
             )
-            """
-        )
+            """)
     finally:
         conn.close()
 
@@ -102,6 +100,26 @@ def test_handle_search(tmp_path: Path) -> None:
 
     assert "Recent coffee demand" in output
     assert "Old coffee demand" not in output
+
+
+def test_handle_search_invalid_fts_syntax_returns_no_results(tmp_path: Path) -> None:
+    from mcp_server.tools import handle_search
+
+    db_path = tmp_path / "radar.duckdb"
+    search_db_path = tmp_path / "search.db"
+    _init_articles_table(db_path)
+
+    with SearchIndex(search_db_path) as idx:
+        idx.upsert("https://example.com/recent", "Recent coffee demand", "Demand is rising")
+
+    output = handle_search(
+        search_db_path=search_db_path,
+        db_path=db_path,
+        query='"',
+        limit=10,
+    )
+
+    assert output == "No results found."
 
 
 def test_handle_recent_updates(tmp_path: Path) -> None:

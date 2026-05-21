@@ -3,7 +3,7 @@ name: Radar Crawler (Optimized)
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 12 * * *"  # Daily at 00:00 UTC (adjust per project)
+    - cron: "0 12 * * *"  # Daily at 12:00 UTC / 21:00 KST
 
 permissions:
   contents: write
@@ -59,9 +59,11 @@ jobs:
       - name: Run Quality Checks
         if: always()
         run: |
-          python scripts/check_quality.py > quality_report.txt 2>&1 || true
+          set +e
+          python scripts/check_quality.py > quality_report.txt 2>&1
+          status=$?
           cat quality_report.txt >> $GITHUB_STEP_SUMMARY
-        continue-on-error: true
+          exit $status
 
       - name: Archive Quality Report
         if: always()
@@ -146,8 +148,14 @@ jobs:
 
       - name: Notify on failure
         if: failure()
+        env:
+          NOTIFICATION_WEBHOOK_URL: ${{ secrets.NOTIFICATION_WEBHOOK_URL }}
         run: |
-          curl -s -X POST "${{ secrets.NOTIFICATION_WEBHOOK_URL }}" \
+          if [ -z "${NOTIFICATION_WEBHOOK_URL:-}" ]; then
+            echo "NOTIFICATION_WEBHOOK_URL is not set; skipping failure webhook."
+            exit 0
+          fi
+          curl -s -X POST "${NOTIFICATION_WEBHOOK_URL}" \
             -H "Content-Type: application/json" \
             -d '{
               "repo": "${{ github.repository }}",
@@ -155,5 +163,5 @@ jobs:
               "run_id": "${{ github.run_id }}",
               "run_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
               "status": "failure",
-              "timestamp": "${{ github.event.head_commit.timestamp }}"
+              "timestamp": "'"$(date -u +'%Y-%m-%dT%H:%M:%SZ')"'"
             }' || true

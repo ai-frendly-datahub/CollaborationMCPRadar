@@ -138,3 +138,18 @@ def test_log_without_run_id_appends_to_same_file(tmp_path: Path) -> None:
     assert output_path1 == output_path2
     lines = output_path1.read_text(encoding="utf-8").splitlines()
     assert len(lines) == 2
+
+
+def test_log_dedupe_links_upserts_existing_default_file(tmp_path: Path) -> None:
+    logger = RawLogger(tmp_path)
+    article1 = _make_article(title="Article 1", summary="First")
+    article2 = _make_article(title="Article 2", summary="Second")
+
+    output_path = logger.log([article1], source_name="source", dedupe_links=True)
+    _ = logger.log([article2], source_name="source", dedupe_links=True)
+
+    lines = output_path.read_text(encoding="utf-8").splitlines()
+    assert len(lines) == 1
+    parsed = json.loads(lines[0])
+    assert parsed["title"] == "Article 2"
+    assert parsed["summary"] == "Second"

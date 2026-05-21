@@ -65,12 +65,20 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: 'pip'
 
-      - name: Install dependencies
+      - name: Install check tooling
         run: |
           python -m pip install --upgrade pip
-          pip install "radar-core @ git+https://github.com/ai-frendly-datahub/radar-core.git@main"
-          pip install -r requirements.txt
           pip install black ruff mypy
+
+      - name: Install project dependencies
+        run: |
+          pip install "radar-core @ git+https://github.com/ai-frendly-datahub/radar-core.git@main"
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          else
+            echo "::warning::requirements.txt not found for ${{ matrix.repo }}"
+          fi
+        continue-on-error: true
 
       - name: Black check
         run: black --check --line-length=100 .

@@ -207,3 +207,55 @@ def test_max_workers_is_capped_and_validated(env_value: str, expected_workers: i
         mock_executor.assert_not_called()
     else:
         mock_executor.assert_called_once_with(max_workers=expected_workers)
+
+
+def test_parallel_collection_uses_separate_session_per_source() -> None:
+    sources = _build_sources(3)
+    manager = _pass_through_manager()
+    seen_sessions: list[object] = []
+    created_sessions: list[Mock] = []
+
+    def collect_with_session(
+        source: Source,
+        *,
+        category: str,
+        limit: int,
+        timeout: int,
+        session: object | None = None,
+    ) -> list[Article]:
+        _ = (limit, timeout)
+        seen_sessions.append(session)
+        return [
+            Article(
+                title=f"article-{source.name}",
+                link=f"https://example.com/{source.name}",
+                summary="ok",
+                published=None,
+                source=source.name,
+                category=category,
+            )
+        ]
+
+    def make_session() -> Mock:
+        session = Mock()
+        created_sessions.append(session)
+        return session
+
+    with (
+        patch("radar.collector._collect_single", side_effect=collect_with_session),
+        patch("radar.collector.get_circuit_breaker_manager", return_value=manager),
+        patch("radar.collector.requests.Session", side_effect=make_session),
+    ):
+        articles, errors = collect_sources(
+            sources,
+            category="test",
+            min_interval_per_host=0.0,
+            max_workers=3,
+        )
+
+    assert len(articles) == 3
+    assert errors == []
+    assert len(created_sessions) == 3
+    assert set(map(id, seen_sessions)) == set(map(id, created_sessions))
+    for session in created_sessions:
+        session.close.assert_called_once_with()

@@ -1,0 +1,95 @@
+{
+  "repo": "CollaborationMCPRadar",
+  "category": "collaboration_mcp",
+  "ontology_version": "0.1.0",
+  "event_model_mappings": {
+    "mcp_directory_entry": "mcp.directory_entry",
+    "mcp_tool_result": "mcp.tool_result",
+    "linked_repository_metadata": "mcp.linked_repository_metadata",
+    "risk_scope_signal": "mcp.risk_scope_signal"
+  },
+  "event_model_field_specs": {
+    "mcp_directory_entry": {
+      "required_fields": [
+        "source_name",
+        "headline",
+        "source_url"
+      ],
+      "optional_fields": [
+        "published_at",
+        "summary",
+        "tags",
+        "repository",
+        "source_section"
+      ],
+      "field_enums": {}
+    },
+    "mcp_tool_result": {
+      "required_fields": [
+        "source_name",
+        "headline",
+        "source_url"
+      ],
+      "optional_fields": [
+        "published_at",
+        "summary",
+        "tags",
+        "tool_name",
+        "repository"
+      ],
+      "field_enums": {}
+    },
+    "linked_repository_metadata": {
+      "required_fields": [
+        "source_name",
+        "headline",
+        "source_url"
+      ],
+      "optional_fields": [
+        "published_at",
+        "summary",
+        "tags",
+        "repository",
+        "archived",
+        "license"
+      ],
+      "field_enums": {}
+    },
+    "risk_scope_signal": {
+      "required_fields": [
+        "source_name",
+        "headline",
+        "source_url"
+      ],
+      "optional_fields": [
+        "published_at",
+        "summary",
+        "tags",
+        "repository",
+        "risk_scope",
+        "evidence_url"
+      ],
+      "field_enums": {}
+    }
+  },
+  "entity_type_hints": [
+    "MCPDomain",
+    "Provider",
+    "Capability",
+    "RiskScope",
+    "ProjectHealth"
+  ],
+  "source_role_mappings": {
+    "awesome-mcp-korea Collaboration & Communication": "source.community_directory_seed",
+    "dooray-go/dooray_mcp": "source.disabled_mcp_candidate",
+    "kwanok/dooray-mcp": "source.disabled_mcp_candidate",
+    "mskim8717/dooray-mcp": "source.metadata_only_mcp_candidate",
+    "hyeri0903/naver-works-mcp": "source.metadata_only_mcp_candidate"
+  },
+  "evidence_policy_ids": [
+    "mcp.community_seed_list",
+    "mcp.repository_metadata",
+    "mcp.activation_gate",
+    "mcp.tool_allowlist"
+  ]
+}
