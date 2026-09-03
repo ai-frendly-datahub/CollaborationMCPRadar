@@ -1,0 +1,75 @@
+{
+  "date": "2026-09-03",
+  "category": "collaboration_mcp",
+  "article_count": 4,
+  "source_count": 1,
+  "matched_count": 4,
+  "top_entities": [
+    {
+      "name": "RiskScope",
+      "count": 15
+    },
+    {
+      "name": "ProjectHealth",
+      "count": 11
+    },
+    {
+      "name": "MCPDomain",
+      "count": 9
+    },
+    {
+      "name": "Provider",
+      "count": 6
+    },
+    {
+      "name": "Capability",
+      "count": 5
+    }
+  ],
+  "sources": {
+    "awesome-mcp-korea Collaboration & Communication": 4
+  },
+  "generated_at": "2026-09-03T16:14:59.684474+00:00",
+  "ontology": {
+    "repo": "CollaborationMCPRadar",
+    "category": "collaboration_mcp",
+    "ontology_version": "0.1.0",
+    "event_model_ids": [
+      "mcp.directory_entry",
+      "mcp.linked_repository_metadata",
+      "mcp.risk_scope_signal",
+      "mcp.tool_result"
+    ],
+    "event_model_mappings": {
+      "mcp_directory_entry": "mcp.directory_entry",
+      "mcp_tool_result": "mcp.tool_result",
+      "linked_repository_metadata": "mcp.linked_repository_metadata",
+      "risk_scope_signal": "mcp.risk_scope_signal"
+    },
+    "entity_type_hints": [
+      "MCPDomain",
+      "Provider",
+      "Capability",
+      "RiskScope",
+      "ProjectHealth"
+    ],
+    "source_role_ids": [
+      "source.community_directory_seed",
+      "source.disabled_mcp_candidate",
+      "source.metadata_only_mcp_candidate"
+    ],
+    "source_role_mappings": {
+      "awesome-mcp-korea Collaboration & Communication": "source.community_directory_seed",
+      "dooray-go/dooray_mcp": "source.disabled_mcp_candidate",
+      "kwanok/dooray-mcp": "source.disabled_mcp_candidate",
+      "mskim8717/dooray-mcp": "source.metadata_only_mcp_candidate",
+      "hyeri0903/naver-works-mcp": "source.metadata_only_mcp_candidate"
+    },
+    "evidence_policy_ids": [
+      "mcp.community_seed_list",
+      "mcp.repository_metadata",
+      "mcp.activation_gate",
+      "mcp.tool_allowlist"
+    ]
+  }
+}
