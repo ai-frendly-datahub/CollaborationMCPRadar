@@ -12,6 +12,7 @@ on:
       - 'pyproject.toml'
       - 'setup.cfg'
       - '.github/workflows/pr-checks.yml'
+      - '.github/workflows/**'
 
 permissions:
   contents: read
